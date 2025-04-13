@@ -1,18 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
+
+// Customer PID
+var pid int = 0
 
 // channels
-var ch_c = make(chan string)
-var ch_r = make(chan string)
-var ch_wr = make(chan string)
-var ch_b = make(chan string)
-
-func new_customer_loop() {
-	fmt.Printf("Greeting Customer: new customer arrives\n")
-	go customer()
-	go new_customer_loop()
-}
+var customer_arrive_ch = make(chan int)
+var waiting_room_ch = make(chan int, 6) // buffered channel for 6 customers
+var barber_cut_hair_ch = make(chan int)
 
 func main() {
 	// Make waiting room, receptionist, barber
@@ -21,22 +20,35 @@ func main() {
 	go barber()
 
 	// Customer arriving
-	go new_customer_loop()
+	for i := 0; i >= 0; i++ {
+		customer_pid := pid
+		pid++
+		fmt.Printf("Greeting Customer %d \n", customer_pid)
+		go customer(customer_pid)
+		time.Sleep(1 * time.Second)
+	}
 }
 
-func customer() {
+func customer(customer_pid int) {
 	// Messages (wait, full, done)
 	// When arrive, sent to the receptionist
-	ch_r <- ""
-	for {
-		ch_c
-	}
+	customer_arrive_ch <- customer_pid
 
 }
 
 func receptionist() {
 	fmt.Printf("Receptionist created")
+	for {
+		var customer_pid = <-customer_arrive_ch
+		fmt.Printf("Greeting %d \n", customer_pid)
 
+		select {
+		case waiting_room_ch <- customer_pid:
+			fmt.Printf("Customer %d sent to waiting room \n", customer_pid)
+		default:
+			fmt.Printf("Waiting room full, customer %d sent away \n", customer_pid)
+		}
+	}
 	// Messages (receive_customer, send_customer_to_waiting_room, tell_barber_added, tell_customer_to_wait)
 
 }
