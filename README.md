@@ -3,9 +3,6 @@ team("edlyn jeyaraj, yueen ma, thomas kung")
 
 edlyn jeyaraj: 730569503 yueen ma: 730572152 thomas kung: 730620459
 
-
-![whiteboard](<Screenshot 2025-04-13 at 9.33.40 PM.png>)
-
 Description:
 
 In this Sleeping Barber assignment, we implement four separate goroutines: customers, a waiting room, a receptionist, and a barber. We use a waitingRoom channel structure to manage customers waiting for haircuts.
@@ -20,11 +17,15 @@ The receptionist goroutines handles each new customer by directing them to the w
 
 The waiting room goroutines manages the waitingRoom channel of waiting customers. The waiting room adds the new customer to the waitingRoom channel.
 
+The barber goroutines handles haircuts. When customers are waiting, the barber:
 
-The barber goroutines handles haircuts:
-
-When customers are waiting, the barber a) Cuts the customer's hair (taking a random amount of time) c) Send the customer pid to haircutComplete channel when their haircut is complete d) Checks with the waiting room if more customers are waiting
+a) Cuts the customer's hair (taking a random amount of time) 
+b) Send the customer pid to haircutComplete channel when their haircut is complete 
+c) Checks with the waiting room if more customers are waiting
 
 If the waitingRoom channel is empty, the barber goes to sleep.
 
 If the waitingRoom channel is not empty, the barber continues serving the next customer.
+
+The picture below shows how our team whiteboarded the project:
+![whiteboard](<Screenshot 2025-04-13 at 9.33.40 PM.png>)
