@@ -70,14 +70,7 @@ func waiting_room() {
 	// Messages (receive_customer, enqueue, dequeue, check_empty)
 	for {
 		var customer_pid = <-waitingRoomCh
-		fmt.Printf("Customer %d sent to barber \n", customer_pid)
 		barberWorkingCh <- customer_pid
-
-		// if customer_pid {
-		// 	barberWorkingCh <- customer_pid
-		// } else if len(waitingRoomCh) == 0 {
-		// 	barberSleepCh <- true
-		// }
 	}
 
 }
@@ -87,8 +80,14 @@ func barber() {
 	// Messages (receive_customer, cut_hair_random_time, tell customer_done)
 	for {
 		var customer_pid = <-barberWorkingCh
+		time.Sleep(10 * time.Millisecond)
+		fmt.Printf("Customer %d sent to barber \n", customer_pid)
 		r := rand.Intn(20)
 		time.Sleep(time.Duration(r) * time.Second)
 		haircutComplete <- customer_pid
+		time.Sleep(10 * time.Millisecond)
+		if len(waitingRoomCh) == 0 {
+			fmt.Printf("Barber sleeping\n")
+		}
 	}
 }
